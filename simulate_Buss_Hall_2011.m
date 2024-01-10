@@ -1,5 +1,6 @@
-%% Simulate BT1999
-% Bernhard Eurich, 2022
+%% Simulate Buss & Hall (2011) with the model as presented in Eurich & Dietz (2023, JASA)
+
+%  Bernhard Eurich, 2022/2023
 clc
 clear
 % close
@@ -10,7 +11,7 @@ addpath(genpath('/home/eurich/git/amtoolbox-code'))
 addpath(genpath('/home/eurich/git/gammawarp_filterbank'))
 % amt_start;
 
-plotting = 1;
+plotting = 2;
 
 
 
@@ -34,23 +35,25 @@ third_split = {'unsymm','spar'};%{'IPDnoise','mpar'}; %'flanking_phase';
 
 %% Definitions
 % pc_threshold = 0.707; % Proportion of correct responses to be defined as detection threshold
-dprime_threshold =0.76; % d' at threshold
+dprime_threshold =1.61; % d' at threshold
 mpar = Eurich2022mpar;
 
 warning('model parameters have been overwritten')
 
 % mit nur GT
-mpar.bin_sigma = 3;
-mpar.mon_sigma = 1.6;%2.41;
+mpar.bin_sigma = 20; %40; %1.6;
+mpar.mon_sigma = 200;%1.3;%2.41;
 
 
-dprime0 = 0;
-dprime1 = 1.5;
+% dprime0 = 0;
+% dprime1 = 1;
 
-% dprime_range = 20;
-% 
-% dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-% dprime1 = dprime_threshold + dprime_range/2;
+dprime_range = 20;
+
+dprime0 = max(dprime_threshold - dprime_range/2,0.1);
+dprime1 = dprime_threshold + dprime_range/2;
+
+mpar.end_evaluate = mpar.fs;
 
 
 %% processing + feature
@@ -68,6 +71,9 @@ model_out_stimulus = run_exp(spar,stim_model_function,mpar,parfor_flag);
 % model_out_stimulus.data = squeeze(model_out_stimulus.data);
 
 %% Decision
+
+mpar.end_evaluate = mpar.fs;
+
 
 [level_split, levels, level_indexes] = spar_split_by_name(model_out_stimulus,'tone_level');
 
@@ -290,13 +296,13 @@ if ismember(2,plotting)
     lg.ItemTokenSize(1) = 10;
     
     dir = '/home/eurich/Paper2_Plots';
-        filename = [dir '/BH11_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma)];
+        filename = [dir '/BH11_noframes' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma)];
     %     exportgraphics(f,filename,'ContentType','Vector')
 %         print(filename,'-dpng')
     
 %     savefig([dir '/BussHall11'])
     
-%      save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
+    save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
 
    
     
