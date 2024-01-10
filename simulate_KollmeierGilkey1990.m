@@ -54,7 +54,7 @@ dprime1 = 20;
 mpar.end_evaluate = 35500;
 
 %% processing + feature
-stim_model_function = @(spar,mpar)stim_model_function(spar,mpar);
+stim_model_function = @(spar,mpar)stim_model_function_EurichDietz2023(spar,mpar);
 
 % Noise alone
 temp_tone_level = spar.tone_level;
