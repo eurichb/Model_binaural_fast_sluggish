@@ -8,11 +8,7 @@ general_itd = spar.itd;
 
 %% choose right stim generation function
 if isequal(spar.experiment,2)
-    gen_stim_func = @gen_stim_MqMc09;
-elseif isequal(spar.experiment,3)
-    gen_stim_func = @gen_stim_KolCul10;
-elseif isequal(spar.experiment,4)
-    gen_stim_func = @gen_stim_SoGu66;
+    error('not in use')
 elseif isequal(spar.experiment,5)
     gen_stim_func = @gen_stim_KollmeierGilkey90;
 elseif isequal(spar.experiment,6)
@@ -35,9 +31,6 @@ elseif isequal(spar.experiment,13)
     gen_stim_func = @gen_stim_dietz2008;
     temp_mod_depth = spar.mod_depth;
     spar.mod_depth = -inf;
-elseif isequal(spar.experiment,14)
-    gen_stim_func = @gen_stim_NoSpi_relative_Spi_position;
-    
 else
     gen_stim_func = @gen_stim_bmld;
 end
@@ -63,7 +56,7 @@ stim_template_interval = stim_interval;
 stim_template_interval.data = cat(2,stim_template.data,stim_interval.data);
 
 
-mpar_loopfunc = @(stim_template,mpar)compute_mpar_loop(stim_template_interval,@Eurich_model_2022_processing,mpar);
+mpar_loopfunc = @(stim_template,mpar)compute_mpar_loop(stim_template_interval,@EurichDietz2023_processing,mpar);
 
 % Processing model receives tokens to be template (alsways without target) and such to be stimulus (can hold target)
 interval_processed = feval(mpar_loopfunc,stim_interval,mpar);
