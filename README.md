@@ -3,7 +3,7 @@ Matlab code for model that accounts for psychoacoustic data on both fast and slu
 To run this, you need experiment_materials, audio_tools, data_tools.
 
 The scripts "simulate_<AuthorYear>" each...
-* load the stimulus parameters using "get_spar_..." (in Repo experiment_materials)
+* load the stimulus parameters using "get_spar_..." (in Repo experiment_materials, use branch eurich_develop to have all the data I uploaded)
 * load the model default parameters  (Eurich2023mpar)
 * run the experiment using run_exp (from data_tools, delivered code version from 2022 here) -- see below
 * convert the abstract representations to d' using the model backend and different helper functions
