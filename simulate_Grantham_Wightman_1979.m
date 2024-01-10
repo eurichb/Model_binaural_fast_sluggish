@@ -1,5 +1,5 @@
-%% Simulate Grantham & Wightman 1979
-% Bernhard Eurich, 2022
+%% Simulate Grantham & Wightman (1979) with the model as presented in Eurich & Dietz (2023, JASA)
+
 clc
 clear
 % close
@@ -9,7 +9,7 @@ addpath(genpath('/home/eurich/git/experiment_materials'))
 addpath(genpath('/home/eurich/git/amtoolbox-code'))
 addpath(genpath('/home/eurich/git/gammawarp_filterbank'))
 
-plotting = 2;
+plotting = [1 2];
 
 % amt_start;
 
@@ -33,19 +33,22 @@ third_split = [];%{'IPDnoise','mpar'}; %'flanking_phase';
 
 %% Definitions
 % pc_threshold = 0.707; % Proportion of correct responses to be defined as detection threshold
-dprime_threshold =0.76; % d' at threshold
+dprime_threshold =0.78; % d' at threshold
 mpar = Eurich2022mpar;
 
-mpar.bin_sigma = 1.4; %0.3 
-mpar.mon_sigma = 1.6; % 1.8
+mpar.bin_sigma = 20; %1.4; %0.3 
+mpar.mon_sigma = 350; % 1.8
 
 warning('model parameters have been overwritten')
 
-dprime_range = 20;
 
-dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-dprime1 = dprime_threshold + dprime_range/2;
+mpar.end_evaluate = 48000;
 
+
+%dprime0 = max(dprime_threshold - dprime_range/2,0.1);
+%dprime1 = dprime_threshold + dprime_range/2;
+dprime0 = 0;
+dprime1 = 10;
 % 
 % base_name = [num2str(spar.itd(1)) '_-' num2str(spar.itd(end)) '_' num2str(spar.noise_mode) '_' num2str(spar.dbspl_tone(1)) ...
 %     '_' num2str(spar.dbspl_tone(end)) '_' num2str(spar.rep(end)) '_' num2str(bmld_mpar.flow) '_' ...
@@ -163,7 +166,7 @@ level_thresh_snr = level_thresh - spar.spl
     close all;
 
 % plotting
-if plotting == 1
+if ismember(1,plotting)
 
     figure
 % hold on;
@@ -183,7 +186,7 @@ if plotting == 1
     title('psychometric functions')
     
     subplot 212
-    figure;
+    
     plot(spar.f_mod,squeeze(level_thresh(1,:,1)))
     hold on;
 %     plot(spar.f_mod,squeeze(level_thresh(1,:,2)),'--')
@@ -193,11 +196,11 @@ if plotting == 1
     title('Detection thresholds for $S\pi$ in noise with oscillating $\rho$')
     
     sgtitle('Predictions for Grantham \& Wightman 1979, Fig.\,8')
+end
     
-elseif plotting == 2
+if ismember(2,plotting)
     
 %     close all;
-    figure;
     % literature data
     load('home/eurich/git/experiment_materials/Grantham_Wightman1979/sdf_Grantham_and_Wightman_1979_fig8_500Hz')
     [sdf_split,modes] = spar_split_by_name(sdf_out,{'subject and interaural correlation'});
@@ -241,13 +244,14 @@ elseif plotting == 2
     lg.ItemTokenSize(1) = 10;
     
     dir = '/home/eurich/Paper2_Plots';
-    filename = [dir '/GW79_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma) '.pdf'];
-        exportgraphics(f,filename,'ContentType','Vector')
+    filename = [dir '/GW79_noframes_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma) '.pdf'];
+      %  exportgraphics(f,filename,'ContentType','Vector')
 %     print(filename,'-dpng')
 
 %     save([filename '_thresh'],'level_thresh')
 
-    save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
+%   save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
 
     
 end
+
