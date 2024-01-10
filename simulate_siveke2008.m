@@ -1,18 +1,13 @@
-%% Simulate Siveke 2008
-% Bernhard Eurich, 2022
+%% Simulate Siveke et al. (2008) with the model as presented in Eurich & Dietz (2023, JASA)
+
+%  Bernhard Eurich, 2022/2023
+
 clc
 clear
-% close
-% close all
-% spar_split_by_name(p_correct_median,first_split);
+
 addpath(genpath('/home/eurich/git/modeling_temporal_binaural_processing'))
 addpath(genpath('/home/eurich/git/experiment_materials'))
-% addpath(genpath('/home/eurich/git/amt_code'))
-addpath(genpath('/home/eurich/git/amtoolbox-code'))
-addpath(genpath('/home/eurich/git/medi-basic-methods'))
 
-% amt_start;
-% addpath(genpath('/home/eurich/ownCloud/Home-Cloud/Code/amtoolbox-full-0.10.0/code'));
 
 addpath(genpath('/home/eurich/git/gammawarp_filterbank'))
 
@@ -40,25 +35,22 @@ third_split = [];%{'IPDnoise','mpar'}; %'flanking_phase';
 %% Definitions
 % pc_threshold = 0.707; % Proportion of correct responses to be defined as detection threshold
 dprime_threshold = 1.28; % d' at threshold
-mpar = Eurich2022mpar;
+mpar = Eurich2023mpar;
 
 
 % when HWR + LP + adaptloop
-mpar.bin_sigma = 0.2;%0.47;%2.3;
-mpar.mon_sigma = 1.6;%2.3;
+mpar.bin_sigma = 22; % mega gut mit 1.4 bei 1 Filter/ERB 100...1300Hz, 70 tokens; %0.2 0.47;%2.3;
+mpar.mon_sigma = 200;%2.3;
 
 warning('model parameters have been overwritten')
 
 
 dprime0 = 0;
-dprime1 = 1.5;
+dprime1 = 5;
 
 mpar.end_evaluate = 40000;
 
-% dprime_range = 20;
-% 
-% dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-% dprime1 = dprime_threshold + dprime_range/2;
+
 
 % 
 % base_name = [num2str(spar.itd(1)) '_-' num2str(spar.itd(end)) '_' num2str(spar.noise_mode) '_' num2str(spar.dbspl_tone(1)) ...
@@ -69,7 +61,7 @@ mpar.end_evaluate = 40000;
 
 
 %% processing + feature
-stim_model_function = @(spar,mpar)stim_model_function(spar,mpar);
+stim_model_function = @(spar,mpar)stim_model_function_EurichDietz2023(spar,mpar);
 
 % template
 temp_f_level = spar.f_level;
@@ -92,7 +84,7 @@ for ilevel = level_indexes
     
     sdf_temp = level_split(ilevel);
     sdf_temp.data = cat(2,sdf_temp.data, model_out_reference.data);
-    sdf_temp = run_spar_space(sdf_temp,@Eurich_model_2022_decision,mpar,0);
+    sdf_temp = run_spar_space(sdf_temp,@EurichDietz2023_decision,mpar,0);
     dprime = spar_concatenate(dprime,sdf_temp);
 
 end
@@ -206,7 +198,7 @@ if ismember(1,plotting)
     
     subplot 211
     plot(spar.SMR,squeeze(squeezed_split_data(:,:,1)));
-    ylim(vylim)
+    %ylim(vylim)
     xlabel('SMR / dB')
     ylabel('$d''$')
     lgstr = num2str(spar.f_mod');
@@ -218,7 +210,7 @@ if ismember(1,plotting)
     plot(spar.SMR,squeeze(squeezed_split_data(:,:,2)));
     xlabel('SMR / dB')
     ylabel('$d''$')
-    ylim(vylim)
+    %ylim(vylim)
     lgstr = num2str(spar.f_mod');
     lg = legend(lgstr,'Location','northwest','box','off');
     title(lg,'$f_m$ / Hz')
@@ -275,10 +267,10 @@ if ismember(2,plotting)
     lg.ItemTokenSize(1) = 10;
     
     dir = '/home/eurich/Paper2_Plots';
-    filename = [dir '/Siveke_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma)];
+    filename = [dir '/Siveke_noframes_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma) '_' num2str(mpar.FrameLen)];
 %     exportgraphics(f,filename,'ContentType','Vector')
 % print(filename,'-dpng')
-% save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
+% save([filename '_thresh_spar_mpar_xtended.mat'],'level_thresh','spar','mpar')
 
     
 end

@@ -1,4 +1,4 @@
-function [out,mpar] = stim_model_function(spar,mpar,template)
+function [out,mpar] = stim_model_function_EurichDietz2023(spar,mpar,template)
 
 
 % write temporary varibles because spar.xxx is redefined between template and target
