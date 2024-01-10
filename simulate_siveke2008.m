@@ -50,10 +50,7 @@ dprime1 = 5;
 
 mpar.end_evaluate = 40000;
 
-% dprime_range = 20;
-% 
-% dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-% dprime1 = dprime_threshold + dprime_range/2;
+
 
 % 
 % base_name = [num2str(spar.itd(1)) '_-' num2str(spar.itd(end)) '_' num2str(spar.noise_mode) '_' num2str(spar.dbspl_tone(1)) ...
@@ -64,7 +61,7 @@ mpar.end_evaluate = 40000;
 
 
 %% processing + feature
-stim_model_function = @(spar,mpar)stim_model_function(spar,mpar);
+stim_model_function = @(spar,mpar)stim_model_function_EurichDietz2023(spar,mpar);
 
 % template
 temp_f_level = spar.f_level;
