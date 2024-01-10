@@ -36,17 +36,14 @@ third_split = [];%{'IPDnoise','mpar'}; %'flanking_phase';
 dprime_threshold =0.78; % d' at threshold
 mpar = Eurich2023mpar;
 
-mpar.bin_sigma = 20; %1.4; %0.3 
-mpar.mon_sigma = 350; % 1.8
+mpar.bin_sigma = 20; 
+mpar.mon_sigma = 350;
 
 warning('model parameters have been overwritten')
 
 
 mpar.end_evaluate = 48000;
 
-
-%dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-%dprime1 = dprime_threshold + dprime_range/2;
 dprime0 = 0;
 dprime1 = 10;
 % 
