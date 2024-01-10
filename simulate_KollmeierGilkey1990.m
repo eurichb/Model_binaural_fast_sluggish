@@ -1,5 +1,5 @@
-%% Simulate BT1999
-% Bernhard Eurich, 2022
+%% Simulate Kollmeier & Gilkey 1990 with the model as presented in Eurich & Dietz (2023, JASA)
+% Bernhard Eurich, 2022/2023
 clc
 clear
 % close
@@ -12,9 +12,9 @@ addpath(genpath('/home/eurich/git/medi-basic-methods'))
 addpath(genpath('/home/eurich/git/amtoolbox-code'))
 % amt_start;
 
-plotting = 1;
+plotting = [1 2];
 
-load_server_data = 1;
+load_server_data = 0;
 
 %% SPAR
 
@@ -33,24 +33,25 @@ third_split = {'noise_mode','spar'};
 
 %% Definitions
 % pc_threshold = 0.707; % Proportion of correct responses to be defined as detection threshold
-dprime_threshold =0.76; % d' at threshold
+dprime_threshold =1.14; %0.78; % d' at threshold
 mpar = Eurich2022mpar;
 
 %% Experiment-specific internal noise parameter set
 
-mpar.bin_sigma = 0.4; %0.3 
-mpar.mon_sigma = 1.5; % 1.8
+mpar.bin_sigma = 12; %0.7; %0.3 
+mpar.mon_sigma = 500; %53; %1.8; % 1.8
+
 
 warning('model parameters have been overwritten')
 
-dprime_range = 20;
 
-dprime0 = max(dprime_threshold - dprime_range/2,0.1);
-dprime1 = dprime_threshold + dprime_range/2;
+dprime0 = 0.7; %0.4; 
+dprime1 = 20; 
+%This means we fit the straight line the a higher excerpt of the psychometric function
+% to overcome the problem that there is always some binaural d' when the
+% tone is very close to the transition point --> unwanted d' Huckel
 
-
-
-mpar.end_evaluate = 14000;
+mpar.end_evaluate = 35500;
 
 %% processing + feature
 stim_model_function = @(spar,mpar)stim_model_function(spar,mpar);
@@ -156,43 +157,48 @@ end
 
 % dprime.thresh = level_thresh;
 level_thresh
-
-
-%% plotting
-if plotting == 1
-    
     close all;
+
+
+% plotting
+if ismember(1,plotting)
+    
     
     figure
     
     subplot 211
     plot(spar.tone_level,squeeze(split_data(:,1,:)))
-    hold on;
-%     plot(spar.tone_level,squeeze(split_data(:,2,:)))
+
 
     xlabel('tone level / dB SPL')
     ylabel('$d''$')
     dt = num2str(spar.delay_time'*1000);
     lg = legend(dt,'Location','northwest','box','off');
     title(lg,'delay time / ms');
-    title('psychometric functions')
+    title('psychometric functions binaural conditions')
+    ylim([0 3])
     
     subplot 212
-    plot(spar.delay_time*1000,squeeze(level_thresh))
-    xlabel('delay time / ms')
-    ylabel('Threshold level / dB SPL')
-    title('$N\pi N0 S\pi$ detection thresholds')
-    
-    sgtitle('Predictions for KG90')
-    
-elseif plotting == 2
+    plot(spar.tone_level,squeeze(split_data(:,2,:)))%     xlabel('delay time / ms')
+    xlabel('tone level / dB SPL')
+    ylabel('$d''$')
+    dt = num2str(spar.delay_time'*1000);
+    title('psychometric functions monaural conditions')
+        ylim([0 3])
+
+
+%     
+%     sgtitle('Predictions for KG90')
+end
+
+
+if ismember(2,plotting)
     
     if load_server_data
         load('KG90_21-Oct-2022 10:55:34_0.6_1.8_0.03_thresh_spar_mpar.mat')
         fprintf('Loaded server data...\n')
     end
     
-    close all;
     col = colororder;
 
     % literature data
@@ -278,7 +284,13 @@ elseif plotting == 2
     grid on;
     set(gca,'GridLineStyle',':','LineWidth',1)
     
-  
+      dir = '/home/eurich/Paper2_Plots';
+    filename = [dir '/KG90_noframes_long_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma) '_' num2str(mpar.tau) '_' num2str(mpar.FrameLen)];
+   %     eportgraphics(f,filename,'ContentType','Vector')
+    %print(filename,'-dpng')
+
+save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
+   
 
     style_plot_paper(f,8.2,'AxesSep',0.8,'OneLabelAxis',1,'OneTickAxis',0,'MoveTitle','none',...
         'extra_headroom_cm',0.2,'extra_footroom',1,'FigureRatio',16/20,'FontSize',9)
@@ -291,12 +303,7 @@ elseif plotting == 2
         lg.Position(1) = 0.6;
     lg.Position(2) = 0.95;
     
-    dir = '/home/eurich/Paper2_Plots';
-    filename = [dir '/KG90_' datestr(datetime) '_' num2str(mpar.bin_sigma) '_' num2str(mpar.mon_sigma) '_' num2str(mpar.tau)];
-        eportgraphics(f,filename,'ContentType','Vector')
-    print(filename,'-dpng')
 
-% save([filename '_thresh_spar_mpar.mat'],'level_thresh','spar','mpar')
-   
 end
+
 
