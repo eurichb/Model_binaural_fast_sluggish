@@ -34,7 +34,7 @@ third_split = [];%{'IPDnoise','mpar'}; %'flanking_phase';
 %% Definitions
 % pc_threshold = 0.707; % Proportion of correct responses to be defined as detection threshold
 dprime_threshold =0.78; % d' at threshold
-mpar = Eurich2022mpar;
+mpar = Eurich2023mpar;
 
 mpar.bin_sigma = 20; %1.4; %0.3 
 mpar.mon_sigma = 350; % 1.8
