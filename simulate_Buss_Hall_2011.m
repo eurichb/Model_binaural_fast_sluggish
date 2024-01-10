@@ -41,12 +41,10 @@ mpar = Eurich2023mpar;
 warning('model parameters have been overwritten')
 
 % mit nur GT
-mpar.bin_sigma = 20; %40; %1.6;
-mpar.mon_sigma = 200;%1.3;%2.41;
+mpar.bin_sigma = 20;
+mpar.mon_sigma = 200;
 
 
-% dprime0 = 0;
-% dprime1 = 1;
 
 dprime_range = 20;
 
